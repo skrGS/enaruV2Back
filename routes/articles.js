@@ -31,6 +31,6 @@ router
 
 router
   .route("/:id/upload-photo")
-  .put(protect, authorize("admin", "operator"), uploadArticlePhoto);
+  .post(protect, authorize("admin", "operator"), uploadArticlePhoto);
 
 module.exports = router;
