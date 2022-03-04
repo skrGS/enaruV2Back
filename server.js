@@ -16,7 +16,11 @@ const hpp = require("hpp");
 
 // Router оруулж ирэх
 const categoriesRoutes = require("./routes/categories");
-const booksRoutes = require("./routes/books");
+const historiesRoutes = require("./routes/histories");
+const coursesRoutes = require("./routes/courses");
+const videosRoutes = require("./routes/videos");
+const commentsRoutes = require("./routes/comments");
+const articlesRoutes = require("./routes/articles");
 const usersRoutes = require("./routes/users");
 const injectDb = require("./middleware/injectDb");
 const errorHandler = require("./middleware/error");
@@ -92,7 +96,11 @@ app.use(morgan("combined", { stream: accessLogStream }));
 
 // REST API RESOURSE
 app.use("/api/v1/categories", categoriesRoutes);
-app.use("/api/v1/books", booksRoutes);
+app.use("/api/v1/histories", historiesRoutes);
+app.use("/api/v1/videos", videosRoutes);
+app.use("/api/v1/comments", commentsRoutes);
+app.use("/api/v1/articles", articlesRoutes);
+app.use("/api/v1/courses", coursesRoutes);
 app.use("/api/v1/users", usersRoutes);
 
 // Алдаа үүсэхэд барьж авч алдааны мэдээллийг клиент тал руу автоматаар мэдээлнэ

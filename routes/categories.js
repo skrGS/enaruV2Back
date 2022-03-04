@@ -11,8 +11,8 @@ const {
 } = require("../controller/categories");
 
 // api/v1/categories/:id/books
-const { getCategoryBooks } = require("../controller/books");
-router.route("/:categoryId/books").get(getCategoryBooks);
+const { getCategoryCourses } = require("../controller/courses");
+router.route("/:categoryId/courses").get(getCategoryCourses);
 
 //"/api/v1/categories"
 router

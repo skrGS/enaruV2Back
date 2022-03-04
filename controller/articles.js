@@ -1,13 +1,13 @@
-const Book = require("../models/Book");
+const Article = require("../models/Article");
 const path = require("path");
-const Category = require("../models/Category");
+const Video = require("../models/Video");
 const MyError = require("../utils/myError");
 const asyncHandler = require("express-async-handler");
 const paginate = require("../utils/paginate");
 const User = require("../models/User");
 
-// api/v1/books
-exports.getBooks = asyncHandler(async (req, res, next) => {
+// api/v1/articles
+exports.getArticles = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
   const sort = req.query.sort;
@@ -15,9 +15,9 @@ exports.getBooks = asyncHandler(async (req, res, next) => {
 
   [("select", "sort", "page", "limit")].forEach((el) => delete req.query[el]);
 
-  const pagination = await paginate(page, limit, Book);
+  const pagination = await paginate(page, limit, Article);
 
-  const books = await Book.find(req.query, select)
+  const articles = await Article.find(req.query, select)
     .populate({
       path: "category",
       select: "name averagePrice",
@@ -28,19 +28,19 @@ exports.getBooks = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    count: books.length,
-    data: books,
+    count: articles.length,
+    data: articles,
     pagination,
   });
 });
 
-exports.getUserBooks = asyncHandler(async (req, res, next) => {
+exports.getUserArticles = asyncHandler(async (req, res, next) => {
   req.query.createUser = req.userId;
-  return this.getBooks(req, res, next);
+  return this.getArticles(req, res, next);
 });
 
-// api/v1/categories/:catId/books
-exports.getCategoryBooks = asyncHandler(async (req, res, next) => {
+// api/v1/categories/:catId/articles
+exports.getVideoArticles = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 2;
   const sort = req.query.sort;
@@ -48,10 +48,10 @@ exports.getCategoryBooks = asyncHandler(async (req, res, next) => {
 
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
 
-  const pagination = await paginate(page, limit, Book);
+  const pagination = await paginate(page, limit, Article);
 
   //req.query, select
-  const books = await Book.find(
+  const articles = await Article.find(
     { ...req.query, category: req.params.categoryId },
     select
   )
@@ -61,22 +61,22 @@ exports.getCategoryBooks = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    count: books.length,
-    data: books,
+    count: articles.length,
+    data: articles,
     pagination,
   });
 });
 
-exports.getBook = asyncHandler(async (req, res, next) => {
-  const book = await Book.findById(req.params.id);
+exports.getArticle = asyncHandler(async (req, res, next) => {
+  const article = await Article.findById(req.params.id);
 
-  if (!book) {
+  if (!article) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
   res.status(200).json({
     success: true,
-    data: book,
+    data: article,
   });
 });
 
@@ -89,75 +89,75 @@ exports.createCategory = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.createBook = asyncHandler(async (req, res, next) => {
-  const category = await Category.findById(req.body.category);
+exports.createArticle = asyncHandler(async (req, res, next) => {
+//   const category = await Category.findById(req.body.category);
 
-  if (!category) {
-    throw new MyError(req.body.category + " ID-тэй категори байхгүй!", 400);
-  }
+//   if (!category) {
+//     throw new MyError(req.body.category + " ID-тэй категори байхгүй!", 400);
+//   }
 
   req.body.createUser = req.userId;
 
-  const book = await Book.create(req.body);
+  const article = await Article.create(req.body);
 
   res.status(200).json({
     success: true,
-    data: book,
+    data: article,
   });
 });
 
-exports.deleteBook = asyncHandler(async (req, res, next) => {
-  const book = await Book.findById(req.params.id);
+exports.deleteArticle = asyncHandler(async (req, res, next) => {
+  const article = await Article.findById(req.params.id);
 
-  if (!book) {
+  if (!article) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүй байна.", 404);
   }
 
-  if (book.createUser.toString() !== req.userId && req.userRole !== "admin") {
+  if (article.createUser.toString() !== req.userId && req.userRole !== "admin") {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
   }
 
   const user = await User.findById(req.userId);
 
-  book.remove();
+  article.remove();
 
   res.status(200).json({
     success: true,
-    data: book,
+    data: article,
     whoDeleted: user.name,
   });
 });
 
-exports.updateBook = asyncHandler(async (req, res, next) => {
-  const book = await Book.findById(req.params.id);
+exports.updateArticle = asyncHandler(async (req, res, next) => {
+  const article = await Article.findById(req.params.id);
 
-  if (!book) {
+  if (!article) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүйээээ.", 400);
   }
 
-  if (book.createUser.toString() !== req.userId && req.userRole !== "admin") {
+  if (article.createUser.toString() !== req.userId && req.userRole !== "admin") {
     throw new MyError("Та зөвхөн өөрийнхөө номыг л засварлах эрхтэй", 403);
   }
 
   req.body.updateUser = req.userId;
 
   for (let attr in req.body) {
-    book[attr] = req.body[attr];
+    article[attr] = req.body[attr];
   }
 
-  book.save();
+  article.save();
 
   res.status(200).json({
     success: true,
-    data: book,
+    data: article,
   });
 });
 
-// PUT:  api/v1/books/:id/photo
-exports.uploadBookPhoto = asyncHandler(async (req, res, next) => {
-  const book = await Book.findById(req.params.id);
+// PUT:  api/v1/articles/:id/photo
+exports.uploadArticlePhoto = asyncHandler(async (req, res, next) => {
+  const article = await Article.findById(req.params.id);
 
-  if (!book) {
+  if (!article) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүйээ.", 400);
   }
 
@@ -183,8 +183,8 @@ exports.uploadBookPhoto = asyncHandler(async (req, res, next) => {
       );
     }
 
-    book.photo = file.name;
-    book.save();
+    article.photo = file.name;
+    article.save();
 
     res.status(200).json({
       success: true,

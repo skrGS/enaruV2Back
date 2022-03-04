@@ -14,7 +14,7 @@ const {
   logout,
 } = require("../controller/users");
 
-const { getUserBooks } = require("../controller/books");
+const { getUserCourses } = require("../controller/courses");
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ router.use(protect);
 router
   .route("/")
   .get(authorize("admin"), getUsers)
-  .post(authorize("admin"), createUser);
+  .post( createUser);
 
 router
   .route("/:id")
@@ -40,7 +40,7 @@ router
   .delete(authorize("admin"), deleteUser);
 
 router
-  .route("/:id/books")
-  .get(authorize("admin", "operator", "user"), getUserBooks);
+  .route("/:id/courses")
+  .get(authorize("admin", "operator", "user"), getUserCourses);
 
 module.exports = router;

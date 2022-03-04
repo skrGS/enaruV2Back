@@ -46,7 +46,10 @@ const UserSchema = new mongoose.Schema({
   fRelation: {
     type: String,
   },
-
+  history: [{
+    type: mongoose.Schema.ObjectId,
+    ref: "Video",
+  }],
   role: {
     type: String,
     required: [true, "Хэрэглэгчийн эрхийг оруулна уу"],
