@@ -17,7 +17,11 @@ const CommentSchema = new mongoose.Schema(
     },
     comment: {
         type: String,
-    }
+    },
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Category",
+    },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
