@@ -17,8 +17,9 @@ const ArticleSchema = new mongoose.Schema(
     title: {
         type: String,
     },
-    picture: {
+    photo: {
         type: String,
+        default: "no-photo.jpg",
     },
     isSpecial: {
         type: Boolean,
