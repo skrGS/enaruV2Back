@@ -79,19 +79,19 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre("save", async function (next) {
-  // Нууц үг өөрчлөгдөөгүй бол дараачийн middleware рүү шилж
-  if (!this.isModified("password")) next();
+// UserSchema.pre("save", async function (next) {
+//   // Нууц үг өөрчлөгдөөгүй бол дараачийн middleware рүү шилж
+//   if (!this.isModified("password")) next();
 
-  // Нууц үг өөрчлөгдсөн
-  console.time("salt");
-  const salt = await bcrypt.genSalt(10);
-  console.timeEnd("salt");
+//   // Нууц үг өөрчлөгдсөн
+//   console.time("salt");
+//   const salt = await bcrypt.genSalt(10);
+//   console.timeEnd("salt");
 
-  console.time("hash");
-  this.password = await bcrypt.hash(this.password, salt);
-  console.timeEnd("hash");
-});
+//   console.time("hash");
+//   this.password = await bcrypt.hash(this.password, salt);
+//   console.timeEnd("hash");
+// });
 
 UserSchema.methods.getJsonWebToken = function () {
   const token = jwt.sign(
@@ -106,7 +106,7 @@ UserSchema.methods.getJsonWebToken = function () {
 };
 
 UserSchema.methods.checkPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+  return enteredPassword == this.password;
 };
 
 UserSchema.methods.generatePasswordChangeToken = function () {
