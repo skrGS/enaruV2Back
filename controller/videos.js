@@ -79,11 +79,12 @@ exports.getVideo = asyncHandler(async (req, res, next) => {
     
     if (order != 0) {
       if (courseHistory2[0] == undefined) {
-        throw new MyError("Өмнөх бичлэгээ үзнэ үү", 404);
+        const number = order - 1
+        throw new MyError(course.videos[number] + " үзнэ үү", 404);
       }
       const number = order - 1
       if (String(courseHistory2[0].video) != String(course.videos[number]))
-      throw new MyError("Өмнөх бичлэгээ үзнэ үү", 404);
+      throw new MyError(course.videos[number] + " үзнэ үү", 404);
     }
     if (courseHistory1[0] == undefined) {
       req.body.video = req.params.id
@@ -130,7 +131,7 @@ exports.createVideo = asyncHandler(async (req, res, next) => {
 });
 
 exports.deleteVideo = asyncHandler(async (req, res, next) => {
-  
+
   const video = await Video.findById(req.params.id);
   const course = await Course.findById(video.course);
 
