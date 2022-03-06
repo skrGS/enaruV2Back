@@ -8,6 +8,7 @@ const {
   getVideoArticles,
   deleteArticle,
   updateArticle,
+  uploadArticlePhoto,
 } = require("../controller/articles");
 
 const router = express.Router();
@@ -28,8 +29,8 @@ router
   .delete(protect, authorize("admin", "operator"), deleteArticle)
   .put(protect, authorize("admin", "operator"), updateArticle);
 
-// router
-//   .route("/:id/upload-photo")
-//   .post(protect, authorize("admin", "operator"), uploadArticlePhoto);
+router
+  .route("/:id/upload-photo")
+  .post(protect, authorize("admin", "operator"), uploadArticlePhoto);
 
 module.exports = router;

@@ -141,14 +141,60 @@ exports.createArticle = asyncHandler(async (req, res, next) => {
   req.body.createUser = req.userId;
 
   const articl = await Article.create(req.body);
-  const article = await Article.findById(articl._id);
+
+  
+  // image upload
+  if (req.files != null) {
+    const article = await Article.findById(articl._id);
+
+    if (!article) {
+      throw new MyError(req.params.id + " ID-тэй ном байхгүйээ.", 400);
+    }
+    const file = req.files.file;
+    if (!file.mimetype.startsWith("image")) {
+      throw new MyError("Та зураг upload хийнэ үү.", 400);
+    }
+  
+    if (file.size > process.env.MAX_UPLOAD_FILE_SIZE) {
+      throw new MyError("Таны зурагны хэмжээ хэтэрсэн байна.", 400);
+    }
+  
+    file.name = `photo_${articl._id}${path.parse(file.name).ext}`;
+  
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, (err) => {
+      if (err) {
+        throw new MyError(
+          "Файлыг хуулах явцад алдаа гарлаа. Алдаа : " + err.message,
+          400
+        );
+      }
+  
+      article.photo = file.name;
+      article.save();
+  
+      res.status(200).json({
+        success: true,
+        article: article,
+        data: file.name,
+      });
+    });
+  } else {
+    res.status(200).json({
+      success: true,
+      article: articl,
+    });
+  }
+});
+
+exports.uploadArticlePhoto = asyncHandler(async (req, res, next) => {
+
+  const article = await Article.findById(req.params.id);
 
   if (!article) {
     throw new MyError(req.params.id + " ID-тэй ном байхгүйээ.", 400);
   }
   
   // image upload
-
   const file = req.files.file;
   if (!file.mimetype.startsWith("image")) {
     throw new MyError("Та зураг upload хийнэ үү.", 400);
@@ -158,7 +204,7 @@ exports.createArticle = asyncHandler(async (req, res, next) => {
     throw new MyError("Таны зурагны хэмжээ хэтэрсэн байна.", 400);
   }
 
-  file.name = `photo_${articl._id}${path.parse(file.name).ext}`;
+  file.name = `photo_${req.params.id}${path.parse(file.name).ext}`;
 
   file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, (err) => {
     if (err) {
